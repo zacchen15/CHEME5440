@@ -12,18 +12,17 @@ slope = 42 # s
 K_xj = intercept/slope # Molar
 
 #Parameters for Txj
-k_I = 0.09 # 1/s at 37 degC given by BioNumbers (Buc, et al.)
+k_I = 0.04 # 1/s at 37 degC given by BioNumbers (McClure, et al.)
 k_A = 0 # assuming abortive initiation is low
 T_xj = (k_Ej+k_A)/k_I # dimensionless
 
-Vol_cell = (pi*(.308e-6)^2*(2.62e-6))/1000 # L
+Vol_cell = (pi*(.308e-6)^2*(2.62e-6))/1000 # L/cell
 G_j = 2500 # copies/cell
 G_j = G_j*(1/Vol_cell)*(1/6.02e23) # M per cell
 
-R_xt = 1000 # RNAP/cell from BioNumbers
-R_xt = R_xt*(1/Vol_cell)*(1/6.02e23) # M per cell
+R_xt = 30e-9 # M/cell from BioNumbers
 
-r_xj = k_Ej*R_xt*G_j*(1/((K_xj*T_xj)+(T_xj+1)*G_j)) # M/s
+r_xj = k_Ej*R_xt*G_j*(1/((K_xj*T_xj)+(T_xj+1)*G_j)) # M/s per cell
 
 #-----------------------------------------------------------------------------#
 
@@ -33,7 +32,7 @@ T_xj = (k_Ej+k_A)/k_I # dimensionless
 #-----------------------------------------------------------------------------#
 
 # Part C
-I = [0.0001, 0.001, 0.01, 0.1, 1, 10]
+I = collect(0.0001:0.0001:10) # Array of Inductor concentrations
 n = 1.5
 K = 0.30
 W1 = 0.26
@@ -50,11 +49,11 @@ for i = 1:length(I)
 end
 
 r_hat = r_xj * u
-m_j = r_hat / (Kd + M)
+m_j = (r_hat / (Kd + M)) * 10^6
 
 using Pkg
 Pkg.add("Plots")
 using Plots
-plot(I,m_j,linewidth=2,xaxis=:log, label="Steady-State mRNA concentration")
+plot(I,m_j,linewidth=2,xaxis=:log, label="mRNA conc")
 xlabel!("Inducer Concentration (mM)")
-ylabel!("mRNA Concentration (M/cell)")
+ylabel!("mRNA Concentration (uM/cell)")
