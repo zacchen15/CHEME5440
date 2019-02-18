@@ -51,9 +51,8 @@ end
 r_hat = r_xj * u
 m_j = (r_hat / (Kd + M)) * 10^6
 
-using Pkg
-Pkg.add("Plots")
-using Plots
-plot(I,m_j,linewidth=2,xaxis=:log, label="mRNA conc")
-xlabel!("Inducer Concentration (mM)")
-ylabel!("mRNA Concentration (uM/cell)")
+using PyPlot
+figure(1)
+semilogx(I,m_j,color="red")
+xlabel("Inducer Concentration (mM)")
+ylabel("mRNA Concentration (uM/cell)")
