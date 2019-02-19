@@ -124,23 +124,22 @@ end
 
 using PyPlot
 figure(1)
-plot(tSim,m1,color="black")
-plot(tSim,m2,color="blue")
-plot(tSim,m3,color="red")
+plot(tSim[1:end-1],m1[1:end-1],color="black")
+plot(tSim[1:end-1],m2[1:end-1],color="blue")
+plot(tSim[1:end-1],m3[1:end-1],color="red")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 1e-6])
+axis([0, 5, 0, 3e-7])
 tight_layout()
 
 figure(2)
-plot(tSim,p1,color="black")
-plot(tSim,p2,color="blue")
-plot(tSim,p3,color="red")
+plot(tSim[1:end-1],p1[1:end-1],color="black")
+plot(tSim[1:end-1],p2[1:end-1],color="blue")
+plot(tSim[1:end-1],p3[1:end-1],color="red")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 1e-3])
+axis([0, 5, 0, 2e-4])
 tight_layout()
-
 
 #----------------------------------------------------------#
 #Simulation 2 with Inducer concentration zero
@@ -253,19 +252,19 @@ end
 
 using PyPlot
 figure(1)
-plot(tSim,m1,color="black")
-plot(tSim,m2,color="blue")
-plot(tSim,m3,color="red")
+plot(tSim[1:end-1],m1[1:end-1],color="black")
+plot(tSim[1:end-1],m2[1:end-1],color="blue")
+plot(tSim[1:end-1],m3[1:end-1],color="red")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 1e-6])
+axis([0, 5, 0, 3e-7])
 tight_layout()
 
 figure(2)
-plot(tSim,p1,color="black")
-plot(tSim,p2,color="blue")
-plot(tSim,p3,color="red")
+plot(tSim[1:end-1],p1[1:end-1],color="black")
+plot(tSim[1:end-1],p2[1:end-1],color="blue")
+plot(tSim[1:end-1],p3[1:end-1],color="red")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 1e-3])
+axis([0, 5, 0, 2e-4])
 tight_layout()
