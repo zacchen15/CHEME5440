@@ -36,7 +36,7 @@ plot(t,m2,color="blue")
 plot(t,m3,color="red")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 3e-21])
+axis([0, 5, 0, 1e-6])
 tight_layout()
 
 figure(2)
@@ -45,7 +45,7 @@ plot(t,p2,color="blue")
 plot(t,p3,color="red")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 2e-22])
+axis([0, 5, 0, 1e-3])
 tight_layout()
 
 #Setup Time Vector
@@ -63,6 +63,7 @@ x0 = [m1[end];
       p3[end];
       0.0; #I
       ]
+
 
 f(t,x) = Balances(t,x)
 t,X = ode23s(f,x0,tSim; points=:specified)
@@ -83,7 +84,7 @@ plot(t,m2,color="blue")
 plot(t,m3,color="red")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 3e-21])
+axis([0, 5, 0, 1e-6])
 
 figure(2)
 plot(t,p1,color="black")
@@ -91,5 +92,5 @@ plot(t,p2,color="blue")
 plot(t,p3,color="red")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 2e-22])
+axis([0, 5, 0, 1e-3])
 tight_layout()

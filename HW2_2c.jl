@@ -1,9 +1,17 @@
 include("RateTranscription.jl")
+include("RateTranslation.jl")
+
 #Setup Time Vector
 tStart = 0.0
 tStep = 0.01
-tStop = 60.0
+tStop = 1.0
 tSim = collect(tStart:tStep:tStop)
+
+#Given Parameters
+copies = 200
+Lx1 = 1200
+Lx2 = 2400
+Lx3 = 600
 
 #Setup initial conditions
 x0 = [0.0; #m1
@@ -12,20 +20,16 @@ x0 = [0.0; #m1
       0.0; #p1
       0.0; #p2
       0.0; #p3
-      10.0] #I
+      ] #I
+Inducer = 10
 
-#Given Parameters
-copies = 200
-Lx1 = 1200
-Lx2 = 2400
-Lx3 = 600
 #Stoichiometric matrix parameters
 rx1 = RatemRNA(Lx1, copies)
 rx2 = RatemRNA(Lx2, copies)  #M/s per gDCW
 rx3 = RatemRNA(Lx3, copies)
-rL1 = 1
-rL2 = 1
-rL3 = 1
+rL1 = RateAA(Lx1, x0[1])
+rL2 = RateAA(Lx2, x0[2])
+rL3 = RateAA(Lx3, x0[3])
 #Binding Constants for RNAP/transcription
 n = 1.5
 Kd = 0.3
@@ -43,7 +47,7 @@ KL1 = 1
 KL2 = 1
 KL3 = 1
 #Setup fraction bound equations
-fi = (x0[7])^n / ( (Kd)^n + (x0[7])^n )
+fi = (Inducer)^n / ( (Kd)^n + (Inducer)^n )
 f12 = 1
 f32 = 1
 f13 = 1
@@ -68,40 +72,200 @@ r = [rx1*ux1;
       rL1*uL1;
       rL2*uL2;
       rL3*uL3;
-      0]
+      ]
 
 #Setup the species and stoichmetric matrices
 using LinearAlgebra
-A = [-k_xd 0.0 0.0 0.0 0.0 0.0 0.0;         #m1
-      0.0 -k_xd-mu_xd 0.0 0.0 0.0 0.0 0.0;  #m2
-      0.0 0.0 -k_xd-mu_xd 0.0 0.0 0.0 0.0;  #m3
-      0.0 0.0 0.0 -k_ld 0.0 0.0 0.0;        #p1
-      0.0 0.0 0.0 0.0 -k_ld-mu_ld 0.0 0.0;  #p2
-      0.0 0.0 0.0 0.0 0.0 -k_ld-mu_ld 0.0;  #p3
-      0.0 0.0 0.0 0.0 0.0 0.0 1.0]          #I
-S = Matrix{Float64}(I, 7, 7)
+A = [-k_xd 0.0 0.0 0.0 0.0 0.0;         #m1
+      0.0 -k_xd-mu_xd 0.0 0.0 0.0 0.0;  #m2
+      0.0 0.0 -k_xd-mu_xd 0.0 0.0 0.0;  #m3
+      0.0 0.0 0.0 -k_ld 0.0 0.0;        #p1
+      0.0 0.0 0.0 0.0 -k_ld-mu_ld 0.0;  #p2
+      0.0 0.0 0.0 0.0 0.0 -k_ld-mu_ld;  #p3
+      ]
+S = Matrix{Float64}(I, 6, 6)
 A_hat = exp(A*tStep)
-Iden = Matrix{Float64}(I, 7, 7)
+Iden = Matrix{Float64}(I, 6, 6)
 S_hat = inv(A) * (A_hat - Iden) * S
 
-xk = Vector(undef, length(tSim)+1)
+xk = Vector(undef, length(tSim))
+m1 = Vector{Float64}(undef, length(xk))
+m2 = Vector{Float64}(undef, length(xk))
+m3 = Vector{Float64}(undef, length(xk))
+p1 = Vector{Float64}(undef, length(xk))
+p2 = Vector{Float64}(undef, length(xk))
+p3 = Vector{Float64}(undef, length(xk))
+
 xk[1] = x0
-for i = 1:length(tSim)
+m1[1] = x0[1]
+m2[1] = x0[2]
+m3[1] = x0[3]
+p1[1] = x0[4]
+p2[1] = x0[5]
+p3[1] = x0[6]
+
+i = 1;
+while i < (length(tSim)-1)
+      #Do the matrix calculations
       xk[i+1] = A_hat*xk[i] + S_hat*r
+      #Update the amount
+      m1[i+1] = xk[i+1][1]
+      m2[i+1] = xk[i+1][2]
+      m3[i+1] = xk[i+1][3]
+      p1[i+1] = xk[i+1][4]
+      p2[i+1] = xk[i+1][5]
+      p3[i+1] = xk[i+1][6]
+      #Update the translation rate based on mRNA conc
+      r[4] = RateAA(Lx1, xk[i+1][1])
+      r[5] = RateAA(Lx2, xk[i+1][2])
+      r[6] = RateAA(Lx3, xk[i+1][3])
+      global i += 1
 end
 
-m1 = Vector(undef, length(xk))
-m2 = Vector(undef, length(xk))
-m3 = Vector(undef, length(xk))
-p1 = Vector(undef, length(xk))
-p2 = Vector(undef, length(xk))
-p3 = Vector(undef, length(xk))
+using PyPlot
+figure(1)
+plot(tSim,m1,color="black")
+plot(tSim,m2,color="blue")
+plot(tSim,m3,color="red")
+xlabel("time (h)")
+ylabel("Concentration (mM)")
+axis([0, 5, 0, 1e-6])
+tight_layout()
 
-for i in length(xk)
-      m1[i] = xk[i][1]
-      m2[i] = xk[i][2]
-      m3[i] = xk[i][3]
-      p1[i] = xk[i][4]
-      p2[i] = xk[i][5]
-      p3[i] = xk[i][6]
+figure(2)
+plot(tSim,p1,color="black")
+plot(tSim,p2,color="blue")
+plot(tSim,p3,color="red")
+xlabel("time (h)")
+ylabel("Concentration (mM)")
+axis([0, 5, 0, 1e-3])
+tight_layout()
+
+
+#----------------------------------------------------------#
+#Simulation 2 with Inducer concentration zero
+
+#Setup Time Vector
+tStart = 1.0
+tStep = 0.01
+tStop = 5
+tSim = collect(tStart:tStep:tStop)
+
+#Given Parameters
+copies = 200
+Lx1 = 1200
+Lx2 = 2400
+Lx3 = 600
+
+#Setup initial conditions
+x0 = [m1[end-1]; #m1
+      m2[end-1]; #m2
+      m3[end-1]; #m3
+      p1[end-1]; #p1
+      p2[end-1]; #p2
+      p3[end-1]; #p3
+      ] #I
+Inducer = 0
+
+#Stoichiometric matrix parameters
+rx1 = RatemRNA(Lx1, copies)
+rx2 = RatemRNA(Lx2, copies)  #M/s per gDCW
+rx3 = RatemRNA(Lx3, copies)
+rL1 = RateAA(Lx1, x0[1])
+rL2 = RateAA(Lx2, x0[2])
+rL3 = RateAA(Lx3, x0[3])
+
+#Setup fraction bound equations
+fi = (Inducer)^n / ( (Kd)^n + (Inducer)^n )
+f12 = 1
+f32 = 1
+f13 = 1
+f23 = 1
+#Setup Control Functions
+ux1 = (Kx + Ki*fi) / (1 + Kx + Ki*fi)
+ux2 = (Kx + K12*f12 + K32*f32) / (1 + Kx + K12*f12 + K32*f32)
+ux3 = (Kx + K13*f13 + K23*f23) / (1 + Kx + K13*f13 + K23*f23)
+uL1 = (x0[4]) / (TL1*KL1 + x0[4])
+uL2 = (x0[5]) / (TL2*KL2 + x0[5])
+uL3 = (x0[6]) / (TL3*KL3 + x0[6])
+#First Order rxn parameters
+k_xd = 1;   #mRNA degradation 1/s
+k_ld = 1;   #protein degradation 1/s
+mu_xd = log(2) / 0.5;  #mRNA dilution
+mu_ld = log(2) / 0.5;  #protein dilution
+
+#Setup initial conditions for r
+r = [rx1*ux1;
+      rx2*ux2;
+      rx3*ux3;
+      rL1*uL1;
+      rL2*uL2;
+      rL3*uL3;
+      ]
+
+#Setup the species and stoichmetric matrices
+using LinearAlgebra
+A = [-k_xd 0.0 0.0 0.0 0.0 0.0;         #m1
+      0.0 -k_xd-mu_xd 0.0 0.0 0.0 0.0;  #m2
+      0.0 0.0 -k_xd-mu_xd 0.0 0.0 0.0;  #m3
+      0.0 0.0 0.0 -k_ld 0.0 0.0;        #p1
+      0.0 0.0 0.0 0.0 -k_ld-mu_ld 0.0;  #p2
+      0.0 0.0 0.0 0.0 0.0 -k_ld-mu_ld;  #p3
+      ]
+S = Matrix{Float64}(I, 6, 6)
+A_hat = exp(A*tStep)
+Iden = Matrix{Float64}(I, 6, 6)
+S_hat = inv(A) * (A_hat - Iden) * S
+
+xk = Vector(undef, length(tSim))
+m1 = Vector{Float64}(undef, length(xk))
+m2 = Vector{Float64}(undef, length(xk))
+m3 = Vector{Float64}(undef, length(xk))
+p1 = Vector{Float64}(undef, length(xk))
+p2 = Vector{Float64}(undef, length(xk))
+p3 = Vector{Float64}(undef, length(xk))
+
+xk[1] = x0
+m1[1] = x0[1]
+m2[1] = x0[2]
+m3[1] = x0[3]
+p1[1] = x0[4]
+p2[1] = x0[5]
+p3[1] = x0[6]
+
+i = 1;
+while i < (length(tSim)-1)
+      #Do the matrix calculations
+      xk[i+1] = A_hat*xk[i] + S_hat*r
+      #Update the amount
+      m1[i+1] = xk[i+1][1]
+      m2[i+1] = xk[i+1][2]
+      m3[i+1] = xk[i+1][3]
+      p1[i+1] = xk[i+1][4]
+      p2[i+1] = xk[i+1][5]
+      p3[i+1] = xk[i+1][6]
+      #Update the translation rate based on mRNA conc
+      r[4] = RateAA(Lx1, xk[i+1][1])
+      r[5] = RateAA(Lx2, xk[i+1][2])
+      r[6] = RateAA(Lx3, xk[i+1][3])
+      global i += 1
 end
+
+using PyPlot
+figure(1)
+plot(tSim,m1,color="black")
+plot(tSim,m2,color="blue")
+plot(tSim,m3,color="red")
+xlabel("time (h)")
+ylabel("Concentration (mM)")
+axis([0, 5, 0, 1e-6])
+tight_layout()
+
+figure(2)
+plot(tSim,p1,color="black")
+plot(tSim,p2,color="blue")
+plot(tSim,p3,color="red")
+xlabel("time (h)")
+ylabel("Concentration (mM)")
+axis([0, 5, 0, 1e-3])
+tight_layout()
