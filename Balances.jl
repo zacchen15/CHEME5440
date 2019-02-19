@@ -54,9 +54,9 @@ function Balances(t,x)
     #Setup fraction bound equations
     fi = (I)^n / ( (Kd1)^n + (I)^n )
     f12 = (p1)^n / ( (Kd)^n + (p1)^n )
-    f32 = 1 #(p3)^n / ( (Kd)^n + (p3)^n )
+    f32 = (p3)^n / ( (Kd)^n + (p3)^n )
     f13 = (p1)^n / ( (Kd)^n + (p1)^n )
-    f23 = 1 #(p2)^n / ( (Kd)^n + (p2)^n )
+    f23 = (p2)^n / ( (Kd)^n + (p2)^n )
 
     #Setup Control Functions
     ux1 = (Kx + Ki*fi) / (1 + Kx + Ki*fi)

@@ -4,7 +4,7 @@ include("RateTranslation.jl")
 #Setup Time Vector
 tStart = 0.0
 tStep = 0.01
-tStop = 1.0
+tStop = 5.0
 tSim = collect(tStart:tStep:tStop)
 
 #Given Parameters
@@ -32,8 +32,8 @@ rL2 = RateAA(Lx2, x0[2])
 rL3 = RateAA(Lx3, x0[3])
 #Binding Constants for RNAP/transcription
 n = 1.5
-Kd = 0.3
-Kx = 0
+Kd1 = 1
+Kd = 1e-5
 Ki = 1
 K12 = 1
 K32 = 1
@@ -46,24 +46,24 @@ TL3 = 1
 KL1 = 1
 KL2 = 1
 KL3 = 1
+#First Order rxn parameters
+k_xd = 1;   #mRNA degradation 1/s
+k_ld = 1;   #protein degradation 1/s
+mu_xd = log(2) / 0.5;  #mRNA dilution
+mu_ld = log(2) / 0.5;  #protein dilution
 #Setup fraction bound equations
 fi = (Inducer)^n / ( (Kd)^n + (Inducer)^n )
-f12 = 1
-f32 = 1
-f13 = 1
-f23 = 1
+f12 = (x0[4])^n / ( (Kd)^n + (x0[4])^n )
+f32 = (x0[6])^n / ( (Kd)^n + (x0[6])^n )
+f13 = (x0[4])^n / ( (Kd)^n + (x0[4])^n )
+f23 = (x0[5])^n / ( (Kd)^n + (x0[5])^n )
 #Setup Control Functions
 ux1 = (Kx + Ki*fi) / (1 + Kx + Ki*fi)
 ux2 = (Kx + K12*f12 + K32*f32) / (1 + Kx + K12*f12 + K32*f32)
 ux3 = (Kx + K13*f13 + K23*f23) / (1 + Kx + K13*f13 + K23*f23)
-uL1 = (x0[4]) / (TL1*KL1 + x0[4])
-uL2 = (x0[5]) / (TL2*KL2 + x0[5])
-uL3 = (x0[6]) / (TL3*KL3 + x0[6])
-#First Order rxn parameters
-k_xd = 1;   #mRNA degradation 1/s
-k_ld = 10;   #protein degradation 1/s
-mu_xd = log(2) / 30*60;  #mRNA dilution
-mu_ld = log(2) / 30*60;  #protein dilution
+uL1 = 1 #(x0[4]) / (TL1*KL1 + x0[4])
+uL2 = 1 #(x0[5]) / (TL2*KL2 + x0[5])
+uL3 = 1 #(x0[6]) / (TL3*KL3 + x0[6])
 
 #Setup initial conditions for r
 r = [rx1*ux1;
@@ -106,6 +106,11 @@ p3[1] = x0[6]
 
 i = 1;
 while i < (length(tSim)-1)
+      if i < 100
+            Inducer = 10
+      else
+            Inducer = 0
+      end
       #Do the matrix calculations
       xk[i+1] = A_hat*xk[i] + S_hat*r
       #Update the amount
@@ -116,9 +121,23 @@ while i < (length(tSim)-1)
       p2[i+1] = xk[i+1][5]
       p3[i+1] = xk[i+1][6]
       #Update the translation rate based on mRNA conc
-      r[4] = RateAA(Lx1, xk[i+1][1])
-      r[5] = RateAA(Lx2, xk[i+1][2])
-      r[6] = RateAA(Lx3, xk[i+1][3])
+      r[4] = RateAA(Lx1, m1[i+1])
+      r[5] = RateAA(Lx2, m2[i+1])
+      r[6] = RateAA(Lx3, m3[i+1])
+      #Setup fraction bound equations
+      fi = (Inducer)^n / ( (Kd)^n + (Inducer)^n )
+      f12 = (p1[i+1])^n / ( (Kd)^n + (p1[i+1])^n )
+      f32 = (p3[i+1])^n / ( (Kd)^n + (p3[i+1])^n )
+      f13 = (p1[i+1])^n / ( (Kd)^n + (p1[i+1])^n )
+      f23 = (p2[i+1])^n / ( (Kd)^n + (p2[i+1])^n )
+      #Setup Control Functions
+      ux1 = (Kx + Ki*fi) / (1 + Kx + Ki*fi)
+      ux2 = (Kx + K12*f12 + K32*f32) / (1 + Kx + K12*f12 + K32*f32)
+      ux3 = (Kx + K13*f13 + K23*f23) / (1 + Kx + K13*f13 + K23*f23)
+      #Update the transcription rate based on protein conc
+      r[1] = rx1*ux1;
+      r[2] = rx2*ux2;
+      r[3] = rx3*ux3;
       global i += 1
 end
 
@@ -145,6 +164,7 @@ tight_layout()
 #Simulation 2 with Inducer concentration zero
 
 #Setup Time Vector
+#=
 tStart = 1.0
 tStep = 0.01
 tStop = 5
@@ -268,3 +288,5 @@ xlabel("time (h)")
 ylabel("Concentration (mM)")
 axis([0, 5, 0, 2e-4])
 tight_layout()
+
+=#

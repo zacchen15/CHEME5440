@@ -27,6 +27,7 @@ p1 = [i[4] for i in X]
 p2 = [i[5] for i in X]
 p3 = [i[6] for i in X]
 Inducer = [i[7] for i in X]
+print(Inducer)
 
 using PyPlot
 #figure(figsize=(4,3))
@@ -36,16 +37,17 @@ plot(t,m2,color="blue")
 plot(t,m3,color="red")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 1e-6])
+axis([0, 5, 0, 3e-7])
 tight_layout()
 
 figure(2)
 plot(t,p1,color="black")
 plot(t,p2,color="blue")
 plot(t,p3,color="red")
+plot(t,Inducer,color="yellow")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 1e-3])
+axis([0, 5, 0, 3e-4])
 tight_layout()
 
 #Setup Time Vector
@@ -84,13 +86,14 @@ plot(t,m2,color="blue")
 plot(t,m3,color="red")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 1e-6])
+axis([0, 5, 0, 3e-7])
 
 figure(2)
 plot(t,p1,color="black")
 plot(t,p2,color="blue")
 plot(t,p3,color="red")
+plot(t,Inducer*10e-4,color="yellow")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 1e-3])
+axis([0, 5, 0, 3e-4])
 tight_layout()
