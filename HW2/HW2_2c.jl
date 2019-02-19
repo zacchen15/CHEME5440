@@ -34,6 +34,7 @@ rL3 = RateAA(Lx3, x0[3])
 n = 1.5
 Kd1 = 1
 Kd = 1e-5
+Kx = 0
 Ki = 1
 K12 = 1
 K32 = 1

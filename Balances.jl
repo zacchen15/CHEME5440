@@ -56,7 +56,7 @@ function Balances(t,x)
     f12 = (p1)^n / ( (Kd)^n + (p1)^n )
     f32 = (p3)^n / ( (Kd)^n + (p3)^n )
     f13 = (p1)^n / ( (Kd)^n + (p1)^n )
-    f23 = (p2)^n / ( (Kd)^n + (p2)^n ) #Make this zero to break circuit
+    f23 = 0 #(p2)^n / ( (Kd)^n + (p2)^n ) #Make this zero to break circuit
 
     #Setup Control Functions
     ux1 = (Kx + Ki*fi) / (1 + Kx + Ki*fi)

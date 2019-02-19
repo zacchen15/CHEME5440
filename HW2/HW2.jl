@@ -37,7 +37,7 @@ plot(t,m2,color="blue")
 plot(t,m3,color="red")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 3e-7])
+axis([0, 15, 0, 3e-7])
 tight_layout()
 
 figure(2)
@@ -47,13 +47,13 @@ plot(t,p3,color="red")
 plot(t,Inducer*10e-5,color="yellow")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 3e-4])
+axis([0, 15, 0, 3e-4])
 tight_layout()
 
 #Setup Time Vector
 tStart = 1
 tStep = 0.1
-tStop = 5
+tStop = 15
 tSim = collect(tStart:tStep:tStop)
 
 #Setup initial conditions
@@ -86,7 +86,7 @@ plot(t,m2,color="blue")
 plot(t,m3,color="red")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 3e-7])
+axis([0, 15, 0, 3e-7])
 
 figure(2)
 plot(t,p1,color="black")
@@ -95,5 +95,5 @@ plot(t,p3,color="red")
 plot(t,Inducer*10e-5,color="yellow")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 3e-4])
+axis([0, 15, 0, 3e-4])
 tight_layout()
