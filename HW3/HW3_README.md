@@ -82,7 +82,7 @@ julia> E
 ```
 
 #### Part 1C
-The maximum urea production from the cycle was then determined using the Flux Balance Analysis file with the assumption that (1) the reaction fluxes, v<sub>n</sub>, were known, (2) 0 &le; b<sub>j</sub> &le; 10 mmol/gDW-hr, and (3) steady-state enzyme concentration, **E** = 0.01 umol/gDW.
+The maximum urea production from the cycle was then determined using the Flux Balance Analysis file with the assumption that (1) the reaction fluxes, **v<sub>n</sub>**, were known, (2) 0 &le; **b<sub>j</sub>** &le; 10 mmol/gDW-hr for non reversible fluxes, and (3) -10 mmol/gDW-hr &le; **b<sub>j</sub>** &le; 10 mmol/gDW-hr for reversible fluxes, (4) steady-state enzyme concentration, **E** = 0.01 umol/gDW.
 
 The value of the reaction fluxes were determined using the equation:
 $$
@@ -90,4 +90,4 @@ v_j = k_{cat, j}E\prod_{i=1}^{n}{\frac{X_i}{K_{M,i}+X_i}}
 $$
 where k<sub>cat</sub> is the specific rate of each enzyme (given), E is the steady state enzyme concentration (given), X<sub>i</sub> is the steady state metabolite concentration, and K<sub>M,i</sub> is the saturation constant for that metabolite. Values were determined using KEGG, Bionumbers, and Park, et al (2016). In cases that values could not be found, the assumption that X<sub>i</sub> >> K<sub>M,i</sub> was made so that the saturation term would be ~1.
 
-Using this set of equations and constraints, the maximum urea concentration was determined to be 0.00278 mmol/gDW-s.
+Using this set of equations and constraints, the maximum urea concentration was determined to be 10.0 mmol/gDW-hr.

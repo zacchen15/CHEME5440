@@ -95,16 +95,16 @@ default_bounds_array = [0.0 v1; #v1
                         0.0 b_upper; #b2 aspartate
                         0.0 b_upper; #b3 fumarate
                         0.0 b_upper; #b4 urea
-                        0.0 b_upper; #b5 ATP
-                        0.0 b_upper; #b6 H2O
-                        0.0 b_upper; #b7 Pi
-                        0.0 b_upper; #b8 AMP
-                        0.0 b_upper; #b9 PPi
-                        0.0 b_upper; #b10 NO
-                        0.0 b_upper; #b11 O2
-                        0.0 b_upper; #b12 H+
-                        0.0 b_upper; #b13 NADPH
-                        0.0 b_upper; #b14 NADP+
+                        -b_upper b_upper; #b5 ATP
+                        -b_upper b_upper; #b6 H2O
+                        -b_upper b_upper; #b7 Pi
+                        -b_upper b_upper; #b8 AMP
+                        -b_upper b_upper; #b9 PPi
+                        -b_upper b_upper; #b10 NO
+                        -b_upper b_upper; #b11 O2
+                        -b_upper b_upper; #b12 H+
+                        -b_upper b_upper; #b13 NADPH
+                        -b_upper b_upper; #b14 NADP+
                         ]
 
 
@@ -141,4 +141,7 @@ flux_array = answer[2]
 dual_value_array = answer[3]
 uptake_array = answer[4]
 
-print("Maximimum flux of Urea is ", -1*obj_func, " mmol/gDW-s")
+check = S*flux_array
+
+obj_func = obj_func*3600 #conversion to mmol/gDW-hr
+print("Maximimum flux of Urea is ", -1*obj_func, " mmol/gDW-hr")
