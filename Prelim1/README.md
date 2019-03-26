@@ -33,3 +33,7 @@ Running ```Q3.jl``` will also create a figure for the protein concentration vs i
 To view the dual value/shadow price array at an inducer concentration use
 ```julia> print(dual_value_array[:,i])```
 where i/10000 is the inducer concentration of interest. Ex: to look at I = 10 mM, use i = 100000
+
+Based on the output of the dual value array it appears that translation rate is most sensitive to v2, v3, and v4 which correspond to the transcription elongation, mRNA degradation, translation initiation.
+
+Given that the exchange bounds were set to 100000.0 uM/hr it makes sense that the system is limited by transcription and translation since metabolites are readily exchanged.
