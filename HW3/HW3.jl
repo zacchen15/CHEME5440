@@ -57,7 +57,7 @@ v5r = (Kcat_v5r*SS_enzyme_conc) * (citrulline / (Km_v5r + citrulline))
 #stoichiometic matrix, should be 18x20
 #there are 20 fluxes for reactions or simple metabolite transport
 #   and 18 metabolites
-S = Array{Float64}(undef,18,20)
+S = zeros(18,20)
 S[1,:] = [-1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0] #aspartate
 S[2,:] = [1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0] #argininsuccinate
 S[3,:] = [0 1 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0] #fumarate

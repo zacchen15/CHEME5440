@@ -158,7 +158,7 @@ plot(tSim[1:end-1],p2[1:end-1],color="blue")
 plot(tSim[1:end-1],p3[1:end-1],color="red")
 xlabel("time (h)")
 ylabel("Concentration (mM)")
-axis([0, 5, 0, 2e-4])
+axis([0, 5, 0, 3e-4])
 tight_layout()
 
 #----------------------------------------------------------#
