@@ -3,16 +3,16 @@ using ODE
 
 #Setup Time Vector
 tStart = 0.0
-tStep = 10
+tStep = 1.0
 tStop = 10000
 tSim = collect(tStart:tStep:tStop)
 
 #Setup initial conditions
-x0 = [0.0; #E0
+x0 = [10.0; #E0
       0.0; #E1
-      10.0; #E1*
-      0.0; #B
-      2.0; #Bp
+      0.0; #E1*
+      2.0; #B
+      0.0; #Bp
       0.0; #E1*B
       0.0; #E1*Bp
       ]
@@ -46,7 +46,7 @@ y = similar(Ast)
 for i = 1:length(Bp)
       Vb_max = kbp*Bp[i]
       Ast[i] = Kb * (Vr_max / (Vr_max + Vb_max))
-      #y[i] = E1_star[i] / Ast[i]
+      y[i] = E1_star[i] / Ast[i]
 end
 
 using PyPlot
