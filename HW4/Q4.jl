@@ -3,8 +3,8 @@ using ODE
 
 #Setup Time Vector
 tStart = 0.0
-tStep = 1.0
-tStop = 10000
+tStep = 0.1
+tStop = 400
 tSim = collect(tStart:tStep:tStop)
 
 #Setup initial conditions
@@ -51,6 +51,6 @@ end
 
 using PyPlot
 figure(1)
-plot(t,Ast,color="black")
+plot(t,E1_star,color="black")
 xlabel("Time (s)")
 ylabel("Activity")

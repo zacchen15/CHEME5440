@@ -1,6 +1,10 @@
 function Balances(t,x)
     #Define ligand concentration
-    ligand = 10
+    if t < 100
+        ligand = 0.0
+    else
+        ligand = 1.0
+    end
 
     #Define x species vector
     E0 = x[1]
@@ -12,8 +16,6 @@ function Balances(t,x)
     E1_starBp = x[7]
 
     #Constants from Barkai (2001) page 877
-    ar = 0.2 #s^-1 * uM^-1
-    dr = 0.1
     kr = 0.1
     ab = 1000
     db = 1
@@ -21,19 +23,11 @@ function Balances(t,x)
     abp = 100
     dbp = 0.01
     kbp = 1
-    k_plus = 1
-    k_minus = 1
-    a0_plus = 10
+    k_plus = 0#1
+    k_minus = 0#1
     a1_plus = 1 / (1+ligand)
-    a0_minus = 0
     a1_minus = ligand / (1+ligand)
-    b0 = 0
     b1 = 2.5*ligand / (1+ligand)
-
-    ab = 100000
-    abp = 10000
-    k_plus = 10
-    k_minus = 1000
 
     Etot = 10
     R = 0.2
@@ -42,23 +36,14 @@ function Balances(t,x)
 
     #Setup Mass Balances
     dxdt = similar(x)
-    dxdt[1] = Vrmax + kb*E1_starB + kbp*E1_starBp
+    dxdt[1] = kb*E1_starB + kbp*E1_starBp - Vrmax
     dxdt[2] = a1_minus*E1_star - a1_plus*E1 + b1*E1_starB + b1*E1_starBp + Vrmax
-    dxdt[3] = a1_plus*E1 - a1_minus*E1_star + (db-ab)*E1_star*B + (dbp-abp)*E1_star*Bp
-    dxdt[4] = k_minus*Bp - k_plus*A*B + (b1+db+kb-ab)*E1_starB
-    dxdt[5] = k_plus*A*B - k_minus*Bp + (b1+dbp+kbp-abp)*E1_starBp
+    dxdt[3] = a1_plus*E1 - a1_minus*E1_star - abp*E1_star*Bp + dbp*E1_starBp - ab*E1_star*B + db*E1_star*B
+    dxdt[4] = k_minus*Bp - k_plus*A*B - ab*E1_star*B + (b1+db+kb)*E1_starB
+    dxdt[5] = k_plus*A*B - k_minus*Bp - abp*E1_star*Bp + (b1+dbp+kbp)*E1_starBp
     dxdt[6] = ab*E1_star*B - (b1+kb+db)*E1_starB
     dxdt[7] = abp*E1_star*Bp - (b1+kbp+dbp)*E1_starBp
     dxdt
-
-    # dxdt[1] = -Vrmax + kb*E1_starB + kbp*E1_starBp
-    # dxdt[2] = a1_minus*E1_star - a1_plus*E1 + b1*E1_starB + b1*E1_starBp + Vrmax
-    # dxdt[3] = a1_plus*E1 - a1_minus*E1_star + (db - ab)*E1_starB + (dbp - abp)*E1_starBp
-    # dxdt[4] = k_minus*Bp - k_plus*A*B + (b1 + db + kb)*E1_starB - ab*E1_star*B
-    # dxdt[5] = k_plus*A*B - k_minus*Bp + (b1 + dbp + kbp)*E1_starBp - abp*E1_star*Bp
-    # dxdt[6] = ab*E1_star*B - (b1 + db + kb)*E1_starB
-    # dxdt[7] = abp*E1_star*Bp - (b1 + dbp + kbp)*E1_starBp
-    # dxdt
 
     # dxdt[1]= kbp*E1_starBp + kb*E1_starB - Vrmax
     # dxdt[2]= a1_minus*E1_star - a1_plus*E1 + E1_starB*b1 + E1_starBp*b1 + Vrmax
